@@ -41,9 +41,6 @@ dependencies {
 
 	// postgres
 	runtimeOnly 'org.postgresql:postgresql'
-
-	// jjwt
-
 }
 
 tasks.named('test') {
