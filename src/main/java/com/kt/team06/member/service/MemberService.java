@@ -8,7 +8,7 @@ import com.kt.team06.member.dto.response.MemberIdResponse;
 public interface MemberService {
 
     MemberIdResponse signup(MemberSignupRequest request);
-    MemberIdResponse withdraw(Long memberId);
+    MemberIdResponse withdraw(String memberId);
     MemberIdResponse updateMember(Long memberId, MemberUpdateRequest request);
     MemberIdResponse updatePassword(Long memberId, MemberPasswordUpdateRequest request);
 

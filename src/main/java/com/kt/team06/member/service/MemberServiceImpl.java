@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberIdResponse withdraw(Long memberId) {
+    public MemberIdResponse withdraw(String memberId) {
 
         Member member = loadMember(memberId);
 

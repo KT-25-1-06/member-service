@@ -3,6 +3,7 @@ package com.kt.team06.member.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.kafka.common.message.LeaveGroupResponseData.MemberResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.method.P;
@@ -128,25 +129,30 @@ public class KeycloakClientService {
             .block();
     }
 
-    private String login(String username, String password) {
-        WebClient webClient = webClientBuilder
-            .baseUrl("http://keycloak.keycloak.svc.cluster.local")
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-            .build();
-
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", "login-client");
-        formData.add("grant_type", "password");
-        formData.add("username", username);
-        formData.add("password", password);
-
-        AdminTokenResponse tokenResponse = webClient.post()
-            .uri("/realms/team-06/protocol/openid-connect/token")
-            .bodyValue(formData)
-            .retrieve()
-            .bodyToMono(AdminTokenResponse.class)
-            .block();
-
-        return tokenResponse.access_token();
-    }
+    // public String deleteUser(MemberResponse) {
+    //     try {
+    //         executeCreateUser(request);
+    //     } catch (WebClientResponseException e) {
+    //         if (e.getStatusCode().value() == 401) { // 액세스 토큰 만료
+    //             try {
+    //                 log.info(e.getMessage() + "Admin access 토큰 없거나 만료됨");
+    //                 refreshAdminToken(); // 리프레시 토큰으로 재발급 시도
+    //                 executeCreateUser(request);
+    //             } catch (WebClientResponseException refreshException) {
+    //                 log.info(e.getMessage() + "Admin refresh 토큰 없거나 만료됨");
+    //                 try {
+    //                     getAdminToken(); // 새로운 액세스 토큰 발급
+    //                     executeCreateUser(request);
+    //                 } catch (WebClientResponseException lastException) {
+    //                     return lastException.getMessage();
+    //                 }
+    //             }
+    //         } else if (e.getStatusCode().value() == 409) {
+    //             log.info(e.getMessage());
+    //             return e.getMessage();
+    //         }
+            
+    //     }
+    //     return "유저 생성됨";
+    // }
 }

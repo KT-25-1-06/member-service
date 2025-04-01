@@ -9,6 +9,9 @@ import com.kt.team06.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.http.HttpRequest;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +27,13 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.success(memberService.signup(request)));
     }
 
-    @DeleteMapping("/{memberId}/withdraw")
-    public ResponseEntity<ApiResponse<MemberIdResponse>> deleteMember(@PathVariable Long memberId) {
-        return ResponseEntity.ok(ApiResponse.success(memberService.withdraw(memberId)));
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<ApiResponse<MemberIdResponse>> deleteMember(
+            @RequestHeader("x-id") String memberId,
+            @RequestHeader("x-email") String email
+            ) {
+        log.info("회원 탈퇴 요청 - ID: {}, Email: {}", memberId, email);
+        return ResponseEntity.ok(ApiResponse.success(memberService.withdraw(1L)));
     }
 
     @PutMapping("/{memberId}")
