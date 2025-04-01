@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:postgresql://postgresql.member.svc.cluster.local:5432/member-db
+    username: team06
+    password: test1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create  # 또는 create, validate 등
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  kafka:
+    bootstrap-servers: kafka.kafka.svc.cluster.local:9092
+
+    consumer:
+      group-id: ${spring.application.name}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    listener:
+      missing-topics-fatal: false
+
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="user1" password="28B2xUE1Qc";

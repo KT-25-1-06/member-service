@@ -8,20 +8,28 @@ import com.kt.team06.member.entity.Member;
 import com.kt.team06.member.repository.MemberRepository;
 import com.kt.team06.member.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final KeycloakClientService keycloakClientService;
 
     @Override
     public MemberIdResponse signup(MemberSignupRequest request) {
 
         if (memberRepository.existsByEmail(request.email()))
             throw new IllegalArgumentException("존재하는 이메일입니다.");
+
+        log.info("TEST 1");
+        String response = keycloakClientService.getToken("user", "test1234");
+        log.info(response);
 
         Member newMember = memberRepository.save(
                 MemberSignupRequest.toEntity(request)

@@ -21,10 +21,14 @@ public class Member extends BaseEntity {
 
     private String password;
 
-    private String name;
+    private String username;
+    
+    private String firstName;
+
+    private String lastName;
 
     public void update(MemberUpdateRequest request) {
-        this.name = request.name();
+        this.username = request.username();
     }
 
     public void updatePassword(String password) {

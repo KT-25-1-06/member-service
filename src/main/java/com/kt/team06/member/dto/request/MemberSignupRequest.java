@@ -4,14 +4,16 @@ import com.kt.team06.member.entity.Member;
 import com.kt.team06.member.global.util.PasswordUtil;
 
 public record MemberSignupRequest(
-        String email, String password, String name
+        String email, String password, String username, String firstName, String lastName
 ) {
 
     public static Member toEntity(MemberSignupRequest memberSignupRequest) {
         return Member.builder()
                 .email(memberSignupRequest.email())
                 .password(PasswordUtil.encode(memberSignupRequest.password()))
-                .name(memberSignupRequest.name())
+                .username(memberSignupRequest.username())
+                .firstName(memberSignupRequest.firstName())
+                .lastName(memberSignupRequest.lastName())
                 .build();
     }
 }

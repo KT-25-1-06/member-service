@@ -7,17 +7,21 @@ import com.kt.team06.member.dto.response.MemberIdResponse;
 import com.kt.team06.member.global.ApiResponse;
 import com.kt.team06.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<MemberIdResponse>> signup(@RequestBody MemberSignupRequest request) {
+        log.info("TEST 0");
         return ResponseEntity.ok(ApiResponse.success(memberService.signup(request)));
     }
 
