@@ -10,6 +10,7 @@ import com.kt.team06.member.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.kafka.common.protocol.types.Field.Bool;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +28,13 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByEmail(request.email()))
             throw new IllegalArgumentException("존재하는 이메일입니다.");
 
-        log.info("TEST 1");
-        String response = keycloakClientService.getToken("user", "test1234");
-        log.info(response);
+        String response = keycloakClientService.createUser(request);
 
         Member newMember = memberRepository.save(
                 MemberSignupRequest.toEntity(request)
         );
+
+        log.info(response);
 
         return MemberIdResponse.of(newMember.getId());
     }

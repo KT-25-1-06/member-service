@@ -21,7 +21,6 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<MemberIdResponse>> signup(@RequestBody MemberSignupRequest request) {
-        log.info("TEST 0");
         return ResponseEntity.ok(ApiResponse.success(memberService.signup(request)));
     }
 
