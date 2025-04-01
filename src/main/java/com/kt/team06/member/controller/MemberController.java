@@ -29,24 +29,26 @@ public class MemberController {
 
     @DeleteMapping("/withdraw")
     public ResponseEntity<ApiResponse<MemberIdResponse>> deleteMember(
-            @RequestHeader("x-id") String memberId,
-            @RequestHeader("x-email") String email
-            ) {
-        log.info("회원 탈퇴 요청 - ID: {}, Email: {}", memberId, email);
-        return ResponseEntity.ok(ApiResponse.success(memberService.withdraw(1L)));
+            @RequestHeader("x-id") String memberId) {
+        return ResponseEntity.ok(ApiResponse.success(memberService.withdraw(memberId)));
     }
 
-    @PutMapping("/{memberId}")
+    @PutMapping("/")
     public ResponseEntity<ApiResponse<MemberIdResponse>> updateMember(
-            @PathVariable Long memberId, @RequestBody MemberUpdateRequest request
+            @RequestHeader("x-id") String memberId, @RequestBody MemberUpdateRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success(memberService.updateMember(memberId, request)));
     }
 
-    @PutMapping("/{memberId}/password")
+    @PutMapping("/password")
     public ResponseEntity<ApiResponse<MemberIdResponse>> updatePassword(
-            @PathVariable Long memberId, @RequestBody MemberPasswordUpdateRequest request
+            @RequestHeader("x-id") String memberId, @RequestBody MemberPasswordUpdateRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success(memberService.updatePassword(memberId, request)));
+    }
+
+    @GetMapping("/verify-email-success")
+    public ResponseEntity<ApiResponse<String>> updatePassword() {
+        return ResponseEntity.ok(ApiResponse.success("verify-email-success"));
     }
 }

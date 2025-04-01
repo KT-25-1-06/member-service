@@ -28,13 +28,17 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByEmail(request.email()))
             throw new IllegalArgumentException("존재하는 이메일입니다.");
 
-        String response = keycloakClientService.createUser(request);
+        String uid = keycloakClientService.createUser(request);
+
+        if (uid == null) {
+            return null;
+        }
 
         Member newMember = memberRepository.save(
-                MemberSignupRequest.toEntity(request)
+                MemberSignupRequest.toEntity(request, uid)
         );
 
-        log.info(response);
+        log.info(uid);
 
         return MemberIdResponse.of(newMember.getId());
     }
@@ -44,15 +48,20 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = loadMember(memberId);
 
+        String response = keycloakClientService.deleteUser(memberId);
+
         memberRepository.delete(member);
+
+        log.info(response);
 
         return MemberIdResponse.of(member.getId());
     }
 
     @Override
     @Transactional
-    public MemberIdResponse updateMember(Long memberId, MemberUpdateRequest request) {
+    public MemberIdResponse updateMember(String memberId, MemberUpdateRequest request) {
 
+        keycloakClientService.updateUser(memberId, request);
         Member member = loadMember(memberId);
         member.update(request);
 
@@ -61,7 +70,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberIdResponse updatePassword(Long memberId, MemberPasswordUpdateRequest request) {
+    public MemberIdResponse updatePassword(String memberId, MemberPasswordUpdateRequest request) {
+
+        keycloakClientService.updatePassword(memberId, request);
 
         Member member = loadMember(memberId);
         if(!PasswordUtil.matches(request.oldPassword(), member.getPassword()))
@@ -75,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    private Member loadMember(Long memberId) {
+    private Member loadMember(String memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
     }

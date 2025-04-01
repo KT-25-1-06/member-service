@@ -7,8 +7,9 @@ public record MemberSignupRequest(
         String email, String password, String username, String firstName, String lastName
 ) {
 
-    public static Member toEntity(MemberSignupRequest memberSignupRequest) {
+    public static Member toEntity(MemberSignupRequest memberSignupRequest, String id) {
         return Member.builder()
+                .id(id)
                 .email(memberSignupRequest.email())
                 .password(PasswordUtil.encode(memberSignupRequest.password()))
                 .username(memberSignupRequest.username())

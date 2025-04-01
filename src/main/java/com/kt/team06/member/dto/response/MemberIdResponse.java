@@ -1,10 +1,10 @@
 package com.kt.team06.member.dto.response;
 
 public record MemberIdResponse(
-        Long memberId
+        String memberId
 ) {
 
-    public static MemberIdResponse of(Long memberId) {
+    public static MemberIdResponse of(String memberId) {
         return new MemberIdResponse(memberId);
     }
 }

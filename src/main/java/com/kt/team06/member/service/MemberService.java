@@ -9,7 +9,7 @@ public interface MemberService {
 
     MemberIdResponse signup(MemberSignupRequest request);
     MemberIdResponse withdraw(String memberId);
-    MemberIdResponse updateMember(Long memberId, MemberUpdateRequest request);
-    MemberIdResponse updatePassword(Long memberId, MemberPasswordUpdateRequest request);
+    MemberIdResponse updateMember(String memberId, MemberUpdateRequest request);
+    MemberIdResponse updatePassword(String memberId, MemberPasswordUpdateRequest request);
 
 }
