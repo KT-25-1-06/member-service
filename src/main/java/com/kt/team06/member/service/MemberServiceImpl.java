@@ -1,5 +1,6 @@
 package com.kt.team06.member.service;
 
+import com.kt.team06.member.dto.event.MemberSignedUpEvent;
 import com.kt.team06.member.dto.request.MemberPasswordUpdateRequest;
 import com.kt.team06.member.dto.request.MemberSignupRequest;
 import com.kt.team06.member.dto.request.MemberUpdateRequest;
@@ -7,10 +8,12 @@ import com.kt.team06.member.dto.response.MemberIdResponse;
 import com.kt.team06.member.entity.Member;
 import com.kt.team06.member.repository.MemberRepository;
 import com.kt.team06.member.global.util.PasswordUtil;
+import com.kt.team06.member.service.kafka.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.kafka.common.protocol.types.Field.Bool;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,10 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final KeycloakClientService keycloakClientService;
+    private final KafkaProducerService kafkaProducerService;
+
+    @Value("${kafka.topic.member-signed-up}")
+    private String memberSignedUpTopic;
 
     @Override
     public MemberIdResponse signup(MemberSignupRequest request) {
@@ -31,12 +38,14 @@ public class MemberServiceImpl implements MemberService {
         String uid = keycloakClientService.createUser(request);
 
         if (uid == null) {
-            return null;
+            throw new IllegalArgumentException("keycloak 멤버 생성 오류");
         }
 
         Member newMember = memberRepository.save(
                 MemberSignupRequest.toEntity(request, uid)
         );
+
+        kafkaProducerService.send(memberSignedUpTopic, MemberSignedUpEvent.of(newMember));
 
         log.info(uid);
 
