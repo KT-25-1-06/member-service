@@ -1,5 +1,6 @@
 package com.kt.team06.member.service;
 
+import com.kt.team06.member.dto.event.MemberSignedUpEvent;
 import com.kt.team06.member.dto.request.MemberPasswordUpdateRequest;
 import com.kt.team06.member.dto.request.MemberSignupRequest;
 import com.kt.team06.member.dto.request.MemberUpdateRequest;
@@ -7,7 +8,9 @@ import com.kt.team06.member.dto.response.MemberIdResponse;
 import com.kt.team06.member.entity.Member;
 import com.kt.team06.member.repository.MemberRepository;
 import com.kt.team06.member.global.util.PasswordUtil;
+import com.kt.team06.member.service.kafka.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +20,20 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
 
+    private final KafkaProducerService kafkaProducerService;
+
+    @Value("${kafka.topic.member-signed-up}")
+    private String memberSignedUpTopic;
+
     @Override
     public MemberIdResponse signup(MemberSignupRequest request) {
 
         if (memberRepository.existsByEmail(request.email()))
             throw new IllegalArgumentException("존재하는 이메일입니다.");
 
-        Member newMember = memberRepository.save(
-                MemberSignupRequest.toEntity(request)
-        );
+        Member newMember = memberRepository.save(MemberSignupRequest.toEntity(request));
+
+        kafkaProducerService.send(memberSignedUpTopic, MemberSignedUpEvent.of(newMember));
 
         return MemberIdResponse.of(newMember.getId());
     }
